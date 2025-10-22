@@ -70,20 +70,44 @@ void eaxTermPutEntryAt(Terminal* term, char c, uint8_t color, size_t x, size_t y
 	term->buffer[index] = vgaEntry(c, color);
 }
 
-void terminalPutChar(Terminal* term, char c) {
+void eaxTermScroll(Terminal* term) {
+    for (size_t y = 1; y < term->height; y++) {
+        for (size_t x = 0; x < term->width; x++) {
+            term->buffer[(y - 1) * term->width + x] =
+                term->buffer[y * term->width + x];
+        }
+    }
+
+    for (size_t x = 0; x < term->width; x++) {
+        term->buffer[(term->height - 1) * term->width + x] = vgaEntry(' ', term->color);
+    }
+}
+
+void eaxTermPutChar(Terminal* term, char c) {
 	eaxTermPutEntryAt(term, c, term->color, term->column, term->row);
-	if(term->column++ == term->width) {
-		term->column = 0;
-		if(term->row++ == term->height) {
-			term->row = 0;
-		}
-	}
+
+	if (c == '\n') {
+        term->column = 0;
+        term->row++;
+    } else {
+        term->buffer[term->row * term->width + term->column] = vgaEntry(c, term->color);
+        if (++term->column >= term->width) {
+            term->column = 0;
+            term->row++;
+        }
+    }
+
+    if (term->row >= term->height) {
+        eaxTermScroll(term);
+        term->row = term->height - 1;
+    }
+
 	eaxTermSetCursorPos(term, term->row, term->column);
 }
 
 void eaxTermWrite(Terminal* term, const char* data, size_t size) {
 	for(size_t i = 0; i < size; i++) {
-		terminalPutChar(term, data[i]);
+		eaxTermPutChar(term, data[i]);
 	}
 }
 
