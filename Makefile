@@ -6,8 +6,8 @@ C_FILES := $(wildcard $(SRC_DIR)/*.c)
 ASM_FILES := $(wildcard $(SRC_DIR)/*.s)
 ASM_OBJ := $(patsubst $(SRC_DIR)/%.s, $(OBJ_DIR)/%.o, $(ASM_FILES))
 C_OBJ := $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(C_FILES))
-CFLAGS := -std=gnu99 -g -ffreestanding -O2 -Wall -Wextra
-LDFLAGS := -ffreestanding -g -O2 -nostdlib
+CFLAGS := -std=gnu99 -ggdb -ffreestanding -O2 -Wall -Wextra
+LDFLAGS := -ffreestanding -ggdb -O2 -nostdlib
 
 image: $(BIN_DIR)/$(TARGET)
 	cp $(BIN_DIR)/$(TARGET) isodir/boot/$(TARGET)

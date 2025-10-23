@@ -35,6 +35,10 @@
 *.i*86
 *.x86_64
 *.hex
+bin/eax2
+bin/eax2.iso
+isodir/boot/eax2
+
 
 # Debug files
 *.dSYM/
