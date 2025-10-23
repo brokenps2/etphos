@@ -6,7 +6,7 @@
 GDTEntry gdt[GDT_ENTRIES];
 GDTPtr gdtp;
 
-void eaxEncodeGDTEntry(int i, uint32_t base, uint32_t limit, uint8_t access, uint8_t gran) {
+void eaxGDTEncodeEntry(int i, uint32_t base, uint32_t limit, uint8_t access, uint8_t gran) {
 	gdt[i].baseLow = base & 0xFFFF;
 	gdt[i].baseMiddle = (base >> 16) & 0xFF;
 	gdt[i].baseHigh = (base >> 24) & 0xFF;
@@ -18,13 +18,13 @@ void eaxEncodeGDTEntry(int i, uint32_t base, uint32_t limit, uint8_t access, uin
 	gdt[i].access = access;
 }
 
-void gdtInit() {
+void eaxGDTInit() {
 	gdtp.limit = (sizeof(GDTEntry) * GDT_ENTRIES) - 1;
 	gdtp.base = (uint32_t)&gdt;
 
-	eaxEncodeGDTEntry(0, 0, 0, 0, 0);
-	eaxEncodeGDTEntry(1, 0, 0xFFFFFFFF, 0x9A, 0xCF);
-	eaxEncodeGDTEntry(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
+	eaxGDTEncodeEntry(0, 0, 0, 0, 0);
+	eaxGDTEncodeEntry(1, 0, 0xFFFFFFFF, 0x9A, 0xCF);
+	eaxGDTEncodeEntry(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
 
 	extern void gdtFlush(uint32_t gdtPtr);
 	gdtFlush((uint32_t)&gdtp);

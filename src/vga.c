@@ -83,13 +83,11 @@ void eaxTermScroll(Terminal* term) {
 }
 
 void eaxTermPutChar(Terminal* term, char c) {
-    eaxTermPutEntryAt(term, c, term->color, term->column, term->row);
-
     if (c == '\n') {
         term->column = 0;
         term->row++;
     } else {
-        term->buffer[term->row * term->width + term->column] = vgaEntry(c, term->color);
+        eaxTermPutEntryAt(term, c, term->color, term->column, term->row);
         if (++term->column >= term->width) {
             term->column = 0;
             term->row++;
