@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "gdt.h"
+#include "vga.h"
 
 #define GDT_ENTRIES 3
 
@@ -28,4 +29,5 @@ void eaxGDTInit() {
 
 	extern void gdtFlush(uint32_t gdtPtr);
 	gdtFlush((uint32_t)&gdtp);
+	eaxTermWriteString(eaxTermGetMain(), "- GDT Intitialized\n");
 }

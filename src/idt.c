@@ -1,4 +1,6 @@
 #include "idt.h"
+#include "irq.h"
+#include "vga.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -39,7 +41,7 @@ extern void isr31();
 
 __attribute__((aligned(0x10))) static IDTEntry idt[IDT_MAX_DESCRIPTORS];
 
-static IDTPtr iptr;
+IDTPtr idtp;
 
 static bool vectors[IDT_MAX_DESCRIPTORS];
 
@@ -90,13 +92,15 @@ void installExceptions() {
 	eaxIDTSetEntry(31, isr31, 0x8E);
 }
 
+extern void idtFlush();
+
 void eaxIDTInit() {
-	iptr.base = (uintptr_t)&idt[0];
-	iptr.limit = (uint16_t)sizeof(IDTEntry) * IDT_MAX_DESCRIPTORS;
+	idtp.base = (uintptr_t)&idt[0];
+	idtp.limit = (uint16_t)sizeof(IDTEntry) * IDT_MAX_DESCRIPTORS - 1;
 
 	installExceptions();
 
-	asm volatile("lidt %0" : : "m"(iptr));
-	asm volatile("sti");
+	idtFlush();
+	eaxTermWriteString(eaxTermGetMain(), "- IDT Initialized\n");
 }
 

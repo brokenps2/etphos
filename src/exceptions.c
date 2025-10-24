@@ -1,7 +1,5 @@
-#include "kernel.h"
 #include "vga.h"
-
-__attribute__((noreturn)) void eaxExceptionHandler();
+#include "exceptions.h"
 
 const char* exceptionMessages[] = {
 	"EX0: Division by 0 Exception",
@@ -28,9 +26,9 @@ const char* exceptionMessages[] = {
 
 void eaxExceptionHandler(Registers* r) {
 
-	eaxTermWriteString(getTerm(), "\n\n");
-	eaxTermSetColor(getTerm(), VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK);
-	eaxTermWriteString(getTerm(), exceptionMessages[r->intNo]);
-	eaxTermWriteString(getTerm(), "\nSystem Halted");
+	eaxTermWriteString(eaxTermGetMain(), "\n\n");
+	eaxTermSetColor(eaxTermGetMain(), VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK);
+	eaxTermWriteString(eaxTermGetMain(), exceptionMessages[r->intNo]);
+	eaxTermWriteString(eaxTermGetMain(), "\nSystem Halted");
 	asm volatile("hlt");
 }

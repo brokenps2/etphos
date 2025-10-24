@@ -6,10 +6,16 @@
 extern char _binary_ter_u12n_psf_start;
 extern char _binary_ter_u12n_psf_end;
 
+Terminal mainTerm;
+
 static inline uint8_t vgaEntryColor(VGAColor fg, VGAColor bg) { return fg | bg << 4; }
 
 static inline uint16_t vgaEntry(unsigned char uc, uint8_t color) { 
 	return (uint16_t)uc | (uint16_t)color << 8;
+}
+
+Terminal* eaxTermGetMain() {
+    return &mainTerm;
 }
 
 void eaxTermEnableCursor(uint8_t start, uint8_t end) {
@@ -100,6 +106,28 @@ void eaxTermPutChar(Terminal* term, char c) {
     }
 
     eaxTermSetCursorPos(term, term->row, term->column);
+}
+
+void eaxTermPutCharBefore(Terminal* term, char c) {
+    term->column--;
+    eaxTermSetCursorPos(term, term->column, term->row);
+
+    if(c == '\n') {
+        term->row--;
+        term->column = term->width;
+        eaxTermSetCursorPos(term, term->row, term->column);
+        return;
+    }
+
+    eaxTermPutEntryAt(term, c, term->color, term->column, term->row);
+    if(term->column == 0) {
+	term->row--;
+        term->column = term->width;
+        if(term->row == 0) {
+            term->row = term->height;
+        }
+    }
+
 }
 
 void eaxTermWrite(Terminal* term, const char* data, size_t size) {

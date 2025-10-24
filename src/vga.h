@@ -58,5 +58,7 @@ size_t strlen(const char* str);
 void eaxTermSetColor(Terminal* term, VGAColor fg, VGAColor bg);
 void eaxTermPutEntryAt(Terminal* term, char c, uint8_t color, size_t x, size_t y);
 void eaxTermPutChar(Terminal* term, char c);
+void eaxTermPutCharBefore(Terminal* term, char c);
 void eaxTermWrite(Terminal* term, const char* data, size_t size);
 void eaxTermWriteString(Terminal* term, const char* data);
+Terminal* eaxTermGetMain();
