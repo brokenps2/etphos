@@ -14,6 +14,6 @@ typedef struct IDTPtr {
 	uint32_t base;
 } __attribute__((packed)) IDTPtr;
 
-void eaxIDTSetEntry(int i, void* isr, uint8_t flags);
-void eaxIDTInit();
+void IDTSetEntry(int i, void* isr, uint8_t flags);
+void IDTInit();
 

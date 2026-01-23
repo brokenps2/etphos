@@ -47,7 +47,7 @@ static bool vectors[IDT_MAX_DESCRIPTORS];
 
 extern void* isrStubTable[];
 
-void eaxIDTSetEntry(int i, void* isr, uint8_t flags) {
+void IDTSetEntry(int i, void* isr, uint8_t flags) {
 	IDTEntry* descriptor = &idt[i];
 
 	descriptor->isrLow = (uint32_t)isr & 0xFFFF;
@@ -58,49 +58,49 @@ void eaxIDTSetEntry(int i, void* isr, uint8_t flags) {
 }
 
 void installExceptions() {
-	eaxIDTSetEntry(0, isr0, 0x8E);
-	eaxIDTSetEntry(1, isr1, 0x8E);
-	eaxIDTSetEntry(2, isr2, 0x8E);
-	eaxIDTSetEntry(3, isr3, 0x8E);
-	eaxIDTSetEntry(4, isr4, 0x8E);
-	eaxIDTSetEntry(5, isr5, 0x8E);
-	eaxIDTSetEntry(6, isr6, 0x8E);
-	eaxIDTSetEntry(7, isr7, 0x8E);
-	eaxIDTSetEntry(8, isr8, 0x8E);
-	eaxIDTSetEntry(9, isr9, 0x8E);
-	eaxIDTSetEntry(10, isr10, 0x8E);
-	eaxIDTSetEntry(11, isr11, 0x8E);
-	eaxIDTSetEntry(12, isr12, 0x8E);
-	eaxIDTSetEntry(13, isr13, 0x8E);
-	eaxIDTSetEntry(14, isr14, 0x8E);
-	eaxIDTSetEntry(15, isr15, 0x8E);
-	eaxIDTSetEntry(16, isr16, 0x8E);
-	eaxIDTSetEntry(17, isr17, 0x8E);
-	eaxIDTSetEntry(18, isr18, 0x8E);
-	eaxIDTSetEntry(19, isr19, 0x8E);
-	eaxIDTSetEntry(20, isr20, 0x8E);
-	eaxIDTSetEntry(21, isr21, 0x8E);
-	eaxIDTSetEntry(22, isr22, 0x8E);
-	eaxIDTSetEntry(23, isr23, 0x8E);
-	eaxIDTSetEntry(24, isr24, 0x8E);
-	eaxIDTSetEntry(25, isr25, 0x8E);
-	eaxIDTSetEntry(26, isr26, 0x8E);
-	eaxIDTSetEntry(27, isr27, 0x8E);
-	eaxIDTSetEntry(28, isr28, 0x8E);
-	eaxIDTSetEntry(29, isr29, 0x8E);
-	eaxIDTSetEntry(30, isr30, 0x8E);
-	eaxIDTSetEntry(31, isr31, 0x8E);
+	IDTSetEntry(0, isr0, 0x8E);
+	IDTSetEntry(1, isr1, 0x8E);
+	IDTSetEntry(2, isr2, 0x8E);
+	IDTSetEntry(3, isr3, 0x8E);
+	IDTSetEntry(4, isr4, 0x8E);
+	IDTSetEntry(5, isr5, 0x8E);
+	IDTSetEntry(6, isr6, 0x8E);
+	IDTSetEntry(7, isr7, 0x8E);
+	IDTSetEntry(8, isr8, 0x8E);
+	IDTSetEntry(9, isr9, 0x8E);
+	IDTSetEntry(10, isr10, 0x8E);
+	IDTSetEntry(11, isr11, 0x8E);
+	IDTSetEntry(12, isr12, 0x8E);
+	IDTSetEntry(13, isr13, 0x8E);
+	IDTSetEntry(14, isr14, 0x8E);
+	IDTSetEntry(15, isr15, 0x8E);
+	IDTSetEntry(16, isr16, 0x8E);
+	IDTSetEntry(17, isr17, 0x8E);
+	IDTSetEntry(18, isr18, 0x8E);
+	IDTSetEntry(19, isr19, 0x8E);
+	IDTSetEntry(20, isr20, 0x8E);
+	IDTSetEntry(21, isr21, 0x8E);
+	IDTSetEntry(22, isr22, 0x8E);
+	IDTSetEntry(23, isr23, 0x8E);
+	IDTSetEntry(24, isr24, 0x8E);
+	IDTSetEntry(25, isr25, 0x8E);
+	IDTSetEntry(26, isr26, 0x8E);
+	IDTSetEntry(27, isr27, 0x8E);
+	IDTSetEntry(28, isr28, 0x8E);
+	IDTSetEntry(29, isr29, 0x8E);
+	IDTSetEntry(30, isr30, 0x8E);
+	IDTSetEntry(31, isr31, 0x8E);
 }
 
 extern void idtFlush();
 
-void eaxIDTInit() {
+void IDTInit() {
 	idtp.base = (uintptr_t)&idt[0];
 	idtp.limit = (uint16_t)sizeof(IDTEntry) * IDT_MAX_DESCRIPTORS - 1;
 
 	installExceptions();
 
 	idtFlush();
-	eaxTermWriteString(eaxTermGetMain(), "- IDT Initialized\n");
+	termWriteString("- IDT Initialized\n");
 }
 

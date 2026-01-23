@@ -11,14 +11,14 @@ static unsigned char keymapUS[128] = {
 };
 
 
-void eaxKeyboardHandler() {
+void keyboardHandler() {
     unsigned char scancode = inb(0x60);
 
     if(scancode & 0x80) {
 	//ctrl and alt and stuff
     } else if(scancode == 0x0E) {
-	eaxTermPutCharBefore(eaxTermGetMain(), ' ');
+	termPutCharBefore(' ');
     } else {
-	eaxTermPutChar(eaxTermGetMain(), keymapUS[scancode]);
+	termPutChar(keymapUS[scancode]);
     }
 }

@@ -1,5 +1,5 @@
 
-extern eaxExceptionHandler
+extern exceptionHandler
 
 global isr0
 global isr1
@@ -202,7 +202,7 @@ isrCommonStub:
     mov gs, ax
     mov eax, esp
     push eax
-    mov eax, eaxExceptionHandler
+    mov eax, exceptionHandler
     call eax
     pop eax
     pop gs

@@ -24,11 +24,11 @@ const char* exceptionMessages[] = {
 	"EX19-31: Reserved Exception"
 };
 
-void eaxExceptionHandler(Registers* r) {
+void exceptionHandler(Registers* r) {
 
-	eaxTermWriteString(eaxTermGetMain(), "\n\n");
-	eaxTermSetColor(eaxTermGetMain(), VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK);
-	eaxTermWriteString(eaxTermGetMain(), exceptionMessages[r->intNo]);
-	eaxTermWriteString(eaxTermGetMain(), "\nSystem Halted");
+	termWriteString("\n\n");
+	termSetColor(VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK);
+	termWriteString(exceptionMessages[r->intNo]);
+	termWriteString("\nSystem Halted");
 	asm volatile("hlt");
 }

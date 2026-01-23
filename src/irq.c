@@ -30,15 +30,15 @@ extern void irq13();
 extern void irq14();
 extern void irq15();
 
-void eaxIRQSetHandler(uint8_t irq, void (*handler)(Registers* r)) {
+void IRQSetHandler(uint8_t irq, void (*handler)(Registers* r)) {
 	irqRoutines[irq] = handler;
 }
 
-void eaxIRQUninstallHandler(uint8_t irq) {
+void IRQUninstallHandler(uint8_t irq) {
 	irqRoutines[irq] = 0;
 }
 
-void eaxIRQRemap() {
+void IRQRemap() {
 	outb(0x20, 0x11);
 	ioWait();
 	outb(0xA0, 0x11);
@@ -61,30 +61,30 @@ void eaxIRQRemap() {
 	ioWait();
 }
 
-void eaxIRQInstall() {
-	eaxIRQRemap();
-	eaxIDTSetEntry(32, irq0, 0x8E);
-	eaxIDTSetEntry(33, irq1, 0x8E);
-	eaxIDTSetEntry(34, irq2, 0x8E);
-	eaxIDTSetEntry(35, irq3, 0x8E);
-	eaxIDTSetEntry(36, irq4, 0x8E);
-	eaxIDTSetEntry(37, irq5, 0x8E);
-	eaxIDTSetEntry(38, irq6, 0x8E);
-	eaxIDTSetEntry(39, irq7, 0x8E);
-	eaxIDTSetEntry(40, irq8, 0x8E);
-	eaxIDTSetEntry(41, irq9, 0x8E);
-	eaxIDTSetEntry(42, irq10, 0x8E);
-	eaxIDTSetEntry(43, irq11, 0x8E);
-	eaxIDTSetEntry(44, irq12, 0x8E);
-	eaxIDTSetEntry(45, irq13, 0x8E);
-	eaxIDTSetEntry(46, irq14, 0x8E);
-	eaxIDTSetEntry(47, irq15, 0x8E);
-	eaxIRQSetHandler(0, eaxClockHandler);
-	eaxIRQSetHandler(1, eaxKeyboardHandler);
-	eaxTermWriteString(eaxTermGetMain(), "- IRQs defined\n");
+void IRQInstall() {
+	IRQRemap();
+	IDTSetEntry(32, irq0, 0x8E);
+	IDTSetEntry(33, irq1, 0x8E);
+	IDTSetEntry(34, irq2, 0x8E);
+	IDTSetEntry(35, irq3, 0x8E);
+	IDTSetEntry(36, irq4, 0x8E);
+	IDTSetEntry(37, irq5, 0x8E);
+	IDTSetEntry(38, irq6, 0x8E);
+	IDTSetEntry(39, irq7, 0x8E);
+	IDTSetEntry(40, irq8, 0x8E);
+	IDTSetEntry(41, irq9, 0x8E);
+	IDTSetEntry(42, irq10, 0x8E);
+	IDTSetEntry(43, irq11, 0x8E);
+	IDTSetEntry(44, irq12, 0x8E);
+	IDTSetEntry(45, irq13, 0x8E);
+	IDTSetEntry(46, irq14, 0x8E);
+	IDTSetEntry(47, irq15, 0x8E);
+	IRQSetHandler(0, clockHandler);
+	IRQSetHandler(1, keyboardHandler);
+	termWriteString("IRQs defined\n");
 }
 
-void eaxIRQHandler(Registers* r) {
+void IRQHandler(Registers* r) {
 	void (*handler)(Registers* r);
 
 	handler = irqRoutines[r->intNo - 32];

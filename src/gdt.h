@@ -15,5 +15,5 @@ typedef struct GDTPtr {
 	uint32_t base;
 } __attribute__((packed)) GDTPtr;
 
-void eaxGDTEncodeEntry(int i, uint32_t base, uint32_t limit, uint8_t access, uint8_t gran);
-void eaxGDTInit();
+void GDTEncodeEntry(int i, uint32_t base, uint32_t limit, uint8_t access, uint8_t gran);
+void GDTInit();
