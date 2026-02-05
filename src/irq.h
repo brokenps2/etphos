@@ -2,8 +2,8 @@
 #include <stdint.h>
 #include "exceptions.h"
 
-void IRQSetHandler(uint8_t irq, void (*handler)(Registers* r));
-void IRQUninstallHandler(uint8_t irq);
-void IRQRemap();
-void IRQInstall();
+void irq_set_handler(uint8_t irq, void (*handler)(registers_t* r));
+void irq_uninstall_handler(uint8_t irq);
+void irq_remap();
+void irq_install();
 

@@ -1,7 +1,7 @@
 [BITS 32]
 extern gdtp
-global gdtFlush
-gdtFlush:
+global gdt_flush
+gdt_flush:
     lgdt [gdtp]
     mov eax, cr0
     or al, 1

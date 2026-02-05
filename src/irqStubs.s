@@ -96,7 +96,7 @@ irq15:
 	push byte 47
 	jmp irqCommonStub
 
-extern IRQHandler
+extern irq_handler
 
 irqCommonStub:
 	pusha
@@ -111,7 +111,7 @@ irqCommonStub:
 	mov gs, ax
 	mov eax, esp
 	push eax
-	mov eax, IRQHandler
+	mov eax, irq_handler
 	call eax
 	pop eax
 	pop gs

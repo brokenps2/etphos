@@ -1,3 +1,4 @@
+#include "print.h"
 #include "vga.h"
 #include "exceptions.h"
 
@@ -24,11 +25,16 @@ const char* exceptionMessages[] = {
 	"EX19-31: Reserved Exception"
 };
 
-void exceptionHandler(Registers* r) {
+registers_t r;
 
-	termWriteString("\n\n");
-	termSetColor(VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK);
-	termWriteString(exceptionMessages[r->intNo]);
-	termWriteString("\nSystem Halted");
+void dump_registers() {
+}
+
+void exception_handler(registers_t* r) {
+
+	term_write_string("\n\n");
+	term_set_color(VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK);
+	term_write_string(exceptionMessages[r->intNo]);
+	term_write_string("\nSystem Halted");
 	asm volatile("hlt");
 }

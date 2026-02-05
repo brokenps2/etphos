@@ -1,6 +1,6 @@
 [BITS 32]
 extern idtp
-global idtFlush
-idtFlush:
+global idt_flush
+idt_flush:
     lidt [idtp]
     ret

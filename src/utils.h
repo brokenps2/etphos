@@ -1,4 +1,4 @@
 #pragma once
 #include <stdint.h>
 
-void sleepBusy(uint32_t ticks);
+void sleep_busy(uint32_t ticks);

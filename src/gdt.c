@@ -4,10 +4,10 @@
 
 #define GDT_ENTRIES 3
 
-GDTEntry gdt[GDT_ENTRIES];
-GDTPtr gdtp;
+gdtEntry_t gdt[GDT_ENTRIES];
+gdtPtr gdtp;
 
-void GDTEncodeEntry(int i, uint32_t base, uint32_t limit, uint8_t access, uint8_t gran) {
+void gdt_encode_entry(int i, uint32_t base, uint32_t limit, uint8_t access, uint8_t gran) {
 	gdt[i].baseLow = base & 0xFFFF;
 	gdt[i].baseMiddle = (base >> 16) & 0xFF;
 	gdt[i].baseHigh = (base >> 24) & 0xFF;
@@ -19,15 +19,15 @@ void GDTEncodeEntry(int i, uint32_t base, uint32_t limit, uint8_t access, uint8_
 	gdt[i].access = access;
 }
 
-void GDTInit() {
-	gdtp.limit = (sizeof(GDTEntry) * GDT_ENTRIES) - 1;
+void gdt_init() {
+	gdtp.limit = (sizeof(gdtEntry_t) * GDT_ENTRIES) - 1;
 	gdtp.base = (uint32_t)&gdt;
 
-	GDTEncodeEntry(0, 0, 0, 0, 0);
-	GDTEncodeEntry(1, 0, 0xFFFFFFFF, 0x9A, 0xCF);
-	GDTEncodeEntry(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
+	gdt_encode_entry(0, 0, 0, 0, 0);
+	gdt_encode_entry(1, 0, 0xFFFFFFFF, 0x9A, 0xCF);
+	gdt_encode_entry(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
 
-	extern void gdtFlush(uint32_t gdtPtr);
-	gdtFlush((uint32_t)&gdtp);
-	termWriteString("GDT Intitialized\n");
+	extern void gdt_flush(uint32_t gdtPtr);
+	gdt_flush((uint32_t)&gdtp);
+	term_write_string("GDT Intitialized\n");
 }

@@ -7,3 +7,4 @@ char inb(uint16_t port);
 
 void ioWait();
 
+void end_of_int();

@@ -1,24 +1,36 @@
 #include "ports.h"
-#include "vga.h"
+#include "keyboard.h"
+#include <stdbool.h>
 
-static unsigned char keymapUS[128] = {
-    0, 27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b'/*backspace*/, 
-    '\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', 0,
-	   'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`', 0,
-	'\\', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 0,
-	'*', 0, ' ', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	'-', 0, 0, 0, '+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
+char currentKey = 0;
 
-
-void keyboardHandler() {
+void keyboard_handler() {
     unsigned char scancode = inb(0x60);
 
     if(scancode & 0x80) {
-	//ctrl and alt and stuff
-    } else if(scancode == 0x0E) {
-	termPutCharBefore(' ');
     } else {
-	termPutChar(keymapUS[scancode]);
+	currentKey = scancode;
     }
+    end_of_int();
+}
+
+bool is_key_pressed(char key) {
+    if(currentKey == key) {
+	currentKey = 0;
+	return true;
+    }
+    return false;
+}
+
+bool is_key_down(char key) {
+    if(currentKey == key) {
+	return true;
+    }
+    return false;
+}
+
+char resolve_last_keystroke() {
+    char key = currentKey;
+    currentKey = 0;
+    return key;
 }

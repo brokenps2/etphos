@@ -14,3 +14,6 @@ void ioWait() {
 	outb(0x80, 0);
 }
 
+void end_of_int() {
+    outb(0x20, 0x20);
+}

@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "vga.h"
+#include "keyboard.h"
 #include "ports.h"
 #include <stddef.h>
 
@@ -15,13 +16,13 @@ uint8_t termColor;
 extern char _binary_ter_u12n_psf_start;
 extern char _binary_ter_u12n_psf_end;
 
-static inline uint8_t vgaEntryColor(VGAColor fg, VGAColor bg) { return fg | bg << 4; }
+static inline uint8_t vga_entry_color(VGAColor fg, VGAColor bg) { return fg | bg << 4; }
 
-static inline uint16_t vgaEntry(unsigned char uc, uint8_t color) { 
+static inline uint16_t vga_entry(unsigned char uc, uint8_t color) { 
 	return (uint16_t)uc | (uint16_t)color << 8;
 }
 
-void termEnableCursor(uint8_t start, uint8_t end) {
+void term_enable_cursor(uint8_t start, uint8_t end) {
     outb(0x3D4, 0x0A);
     outb(0x3D5, (inb(0x3D5) & 0xC0) | start);
 
@@ -29,12 +30,12 @@ void termEnableCursor(uint8_t start, uint8_t end) {
     outb(0x3D5, (inb(0x3D5) & 0xE0) | end);
 }
 
-void termDisableCursor() {
+void term_disable_cursor() {
     outb(0x3D4, 0x0A);
     outb(0x3D5, 0x20);
 }
 
-void termSetCursorPos(int row, int column) {
+void term_set_cursor_pos(int row, int column) {
     cursorRow = row;
     cursorColumn = column;
     uint16_t pos = cursorRow * termWidth + cursorColumn;
@@ -45,7 +46,7 @@ void termSetCursorPos(int row, int column) {
     outb(0x3D5, (uint8_t)((pos >> 8) & 0xFF));
 }
 
-void termCreate(size_t width, size_t height, uint16_t* address, size_t row, size_t column, VGAColor fg, VGAColor bg) {
+void term_create(size_t width, size_t height, uint16_t* address, size_t row, size_t column, VGAColor fg, VGAColor bg) {
     termWidth = width;
     termHeight = height;
     termBuffer = address;
@@ -53,11 +54,11 @@ void termCreate(size_t width, size_t height, uint16_t* address, size_t row, size
     termColumn = column;
     cursorRow = row;
     cursorColumn = column;
-    termColor = vgaEntryColor(fg, bg);
+    termColor = vga_entry_color(fg, bg);
     for(size_t y = 0; y < termHeight; y++) {
         for(size_t x = 0; x < termWidth; x++) {
             const size_t index = y * termHeight + x;
-            termBuffer[index] = vgaEntry(' ', termColor);
+            termBuffer[index] = vga_entry(' ', termColor);
         }
     }
 }
@@ -70,16 +71,16 @@ size_t strlen(const char* str) {
     return len;
 }
 
-void termSetColor(VGAColor fg, VGAColor bg) {
-    termColor = vgaEntryColor(fg, bg);
+void term_set_color(VGAColor fg, VGAColor bg) {
+    termColor = vga_entry_color(fg, bg);
 }
 
-void termPutEntryAt(char c, uint8_t color, size_t x, size_t y) {
+void term_put_entry_at(char c, uint8_t color, size_t x, size_t y) {
     const size_t index = y * termWidth + x;
-    termBuffer[index] = vgaEntry(c, color);
+    termBuffer[index] = vga_entry(c, color);
 }
 
-void termScroll() {
+void term_scroll() {
     for (size_t y = 1; y < termHeight; y++) {
         for (size_t x = 0; x < termWidth; x++) {
             termBuffer[(y - 1) * termWidth + x] = termBuffer[y * termWidth + x];
@@ -87,16 +88,31 @@ void termScroll() {
     }
 
     for (size_t x = 0; x < termWidth; x++) {
-        termBuffer[(termHeight - 1) * termWidth + x] = vgaEntry(' ', termColor);
+        termBuffer[(termHeight - 1) * termWidth + x] = vga_entry(' ', termColor);
     }
 }
 
-void termPutChar(char c) {
+void term_put_char(char c) {
+    if (c == '\b') {
+        if (termColumn == 0 && termRow > 0) {
+            termRow--;
+            termColumn = termWidth;
+        }
+        if (termColumn > 0) {
+            termColumn--;
+        }
+
+        term_put_entry_at(' ', termColor, termColumn, termRow);
+        term_set_cursor_pos(termRow, termColumn);
+        return;
+    }
+
     if (c == '\n') {
         termColumn = 0;
         termRow++;
     } else {
-        termPutEntryAt(c, termColor, termColumn, termRow);
+        term_put_entry_at(c, termColor, termColumn, termRow);
+
         if (++termColumn >= termWidth) {
             termColumn = 0;
             termRow++;
@@ -104,41 +120,41 @@ void termPutChar(char c) {
     }
 
     if (termRow >= termHeight) {
-        termScroll();
+        term_scroll();
         termRow = termHeight - 1;
     }
 
-    termSetCursorPos(termRow, termColumn);
+    term_set_cursor_pos(termRow, termColumn);
 }
 
-void termPutCharBefore(char c) {
-    termColumn--;
-    termSetCursorPos(termColumn, termRow);
-
-    if(c == '\n') {
-        termRow--;
-        termColumn = termWidth;
-        termSetCursorPos(termRow, termColumn);
-        return;
-    }
-
-    termPutEntryAt(c, termColor, termColumn, termRow);
-    if(termColumn == 0) {
-	termRow--;
-        termColumn = termWidth;
-        if(termRow == 0) {
-            termRow = termHeight;
-        }
-    }
-
-}
-
-void termWrite(const char* data, size_t size) {
+void term_write(const char* data, size_t size) {
     for(size_t i = 0; i < size; i++) {
-        termPutChar(data[i]);
+        term_put_char(data[i]);
     }
 }
 
-void termWriteString(const char* data) {
-    termWrite(data, strlen(data));
+void term_write_string(const char* data) {
+    term_write(data, strlen(data));
+}
+
+void kprint(const char *str) {
+    while (*str) {
+        term_put_char((int)*str);
+        ++str;
+    }
+}
+
+int kputs(const char *str) {
+    kprint(str);
+    term_put_char((int)'\n');
+    return 0;
+}
+
+void term_check_keystroke() {
+    char key = resolve_last_keystroke();
+
+    if (key == 0)
+        return;
+
+    term_put_char(keymapUS[key]);
 }
