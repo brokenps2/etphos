@@ -35,9 +35,12 @@
 *.i*86
 *.x86_64
 *.hex
-bin/eax2
-bin/eax2.iso
-isodir/boot/eax2
+bin/etphos.bin
+bin/etphos.iso
+isodir/boot/etphos.bin
+*.bin
+*.iso
+*.o
 
 
 # Debug files

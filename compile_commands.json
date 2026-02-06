@@ -1,0 +1,9 @@
+[
+  {
+    "directory": "/home/eli/etphos",
+    "command": "/usr/bin/gcc -Wall -g -O2 -pthread -I./src -I./src/libc/include -c src/$(file).c -o obj/$(file).o",
+    "file": "/home/eli/etphos/src/kernel/*.c",
+    "file": "/home/eli/etphos/src/libc/*.c",
+    "output": "/home/eli/etphos/obj/*.o"
+  }
+]

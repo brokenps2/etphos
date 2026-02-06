@@ -1,1 +1,1 @@
-qemu-system-i386 -kernel eax2 -s -S &
+qemu-system-i386 -kernel etphos.bin -s -S &
